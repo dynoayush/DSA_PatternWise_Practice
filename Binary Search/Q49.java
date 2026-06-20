@@ -1,45 +1,46 @@
-// Koko Eating Bananas [LC-875]
+// Capacity to ship packages within D days [LC-1011]
 
-public class Q49 {
-    public int minEatingSpeed(int[] piles, int h) {
-        int left = 1;
+public class Q49{
+    public int shipWithinDays(int[] weights, int days){
+        int left = 0;
         int right = 0;
 
-        for(int pile: piles){
-            right = Math.max(right, pile);
+        for(int weight: weights){
+            left = Math.max(left, weight);
+            right += weight;
         }
 
         while(left<right){
-            int mid = left + (right - left)/2;
+            int mid = left+(right-left)/2;
 
-            if(canEatAll(piles, mid, h)){
-                right = mid;   // trying smaller speed
+            if(canShip(weights, mid, days)){
+                right = mid;
             }
             else{
-                left = mid + 1; // need larger speed
+                left = mid+1;
             }
         }
-
         return left;
     }
 
-    private boolean canEatAll(int[] piles, int speed, int h){
-        int hours = 0;
+    private boolean canShip(int[] weights, int capacity, int days){
+        int usedDays = 1;
+        int currentLoad = 0;
 
-        for(int pile: piles){
-            hours += pile/speed;
-
-            if(pile%speed != 0){
-                hours++;
+        for(int weight: weights){
+            if(currentLoad + weight>capacity){
+                usedDays++;
+                currentLoad=0;
             }
+            currentLoad += weight;
         }
-        return hours <= h;
+        return usedDays <= days;
     }
 
     public static void main(String[] args) {
         Q49 sol = new Q49();
-        int[] piles1 = {3, 6, 7, 11};
-        int h1 = 8;
-        System.out.println("Minimum eating speed: " + sol.minEatingSpeed(piles1, h1));
+        int[] input = {3,2,2,4,1,4};
+        int days = 3;
+        System.out.println("Minimum shipping capacity: " + sol.shipWithinDays(input, days));
     }
 }
